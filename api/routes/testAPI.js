@@ -6,6 +6,7 @@ const path = require('path');
 
 const rust = ffi.Library(path.join(__dirname, '../../backend/target/release/backend'), {
   get_by_key: ["string", [ "string" ]],
+  del_by_key: ["string", [ "string" ]],
   customer_registration: ["string", [ "string" ]],
   resort_registration: ["string", [ "string" ]],
   scan_by_pattern: ["string", [ "string" ]],
@@ -33,6 +34,10 @@ router.post('/customer_registration', function(req, res) {
 router.post('/resort_registration', function(req, res) {
   let stringifiedBody = JSON.stringify(req.body);
   res.send(rust.resort_registration(stringifiedBody));
+});
+
+router.post('/resort_delete', function(req, res) {
+  res.send(rust.del_by_key("resorts:\"" + req.body.name + "\""));
 });
 
 module.exports = router;

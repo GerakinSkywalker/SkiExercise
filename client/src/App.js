@@ -8,6 +8,8 @@ import ResortList from './components/ResortList';
 import ThankYouCR from './components/ThankYouCR';
 import ThankYouRR from './components/ThankYouRR';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import ResortDelete from './components/ResortDelete';
+import ByeR from './components/ByeR';
 
 class App extends React.Component {
   render() {
@@ -39,9 +41,11 @@ class App extends React.Component {
             <Route path="/customer_registration" component={CustomerRegistration} />
             <Route path="/customer_list" component={CustomerList} />
             <Route path="/resort_registration" component={ResortRegistration} />
+            <Route path="/resort_delete" component={ResortDelete} />
             <Route path="/resort_list" component={ResortList} />
             <Route path="/thank_you_cr" component={ThankYouCR} />
             <Route path="/thank_you_rr" component={ThankYouRR} />
+            <Route path="/bye_r" component={ByeR} />
           </div>
         </Router>
       </div>

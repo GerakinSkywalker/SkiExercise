@@ -16,6 +16,15 @@ pub extern fn get_by_key(key: *const c_char) -> *const c_char {
 }
 
 #[no_mangle]
+pub extern fn del_by_key(key: *const c_char) -> *const c_char {
+    let c_str = unsafe { CStr::from_ptr(key) };
+    let response = CString::new(del(c_str.to_str().unwrap()).unwrap()).unwrap();
+    let result = response.as_ptr();
+    std::mem::forget(response);
+    result
+}
+
+#[no_mangle]
 pub extern fn scan_by_pattern(pattern: *const c_char) -> *const c_char {
     let c_str = unsafe { CStr::from_ptr(pattern) };
     
@@ -55,7 +64,7 @@ pub extern fn customer_registration(json_string: *const c_char) -> *const c_char
 pub extern fn resort_registration(json_string: *const c_char) -> *const c_char {
     let c_str = unsafe { CStr::from_ptr(json_string) };
     let unwrapped_string = c_str.to_str().unwrap();
-
+    
     // Parse the string of data into serde_json::Value.
     let json: Value = serde_json::from_str(unwrapped_string).unwrap();
 
@@ -74,6 +83,15 @@ fn get(key: &str) -> redis::RedisResult<String> {
     // read back the key and return it.
     let response = con.get(key)?;
     Ok(response)
+}
+
+fn del(key: &str) -> redis::RedisResult<String> {
+    // connect to redis
+    let client = redis::Client::open(CONN_STR)?;
+    let mut con = client.get_connection()?; //To Do: DRY
+    // read back the key and return it.
+    let response : i8 = con.del(key)?;
+    Ok(response.to_string())
 }
 
 fn setnx(key: &str, json_string: &str) -> redis::RedisResult<String> {
@@ -138,7 +156,6 @@ fn mget(pattern: &str) -> redis::RedisResult<String> {
         for elem in &response_2 {
             v_2.push(str::from_utf8(elem).unwrap());   
         }
-        println!("v2: {:?}", v_2);
 
         let mut json : String = "".to_owned();
         if v_2.len() > 0 {

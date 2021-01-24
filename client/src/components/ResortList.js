@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useHistory } from "react-router-dom";
 
 function ResortList () {
     useEffect(()=>{
@@ -24,16 +25,35 @@ function ResortList () {
 
     const [errors, setErrors] = useState("");
 
+    const history = useHistory();
+
+    const onClickHandler = (x) => {
+        history.push({
+            pathname: '/resort_delete',
+            del_id: x.target.id
+        });
+    };
+
     return (
         <div>
             <h3>Resort List</h3>            
             <table style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                <tr>
+                <thead>
+                <tr key="trHeader">
                     <th>Name</th>
+                    <th></th>
                 </tr>
+                </thead>
+                <tbody>
                 { resortList.map(x => {
-                    return <tr><td>{x}</td></tr>
+                    return <tr key={x}>
+                        <td>{x}</td>
+                        <td>
+                        <button id={x} onClick={onClickHandler}>Del</button>
+                        </td>
+                        </tr>
                 }) }
+                </tbody>
             </table>
             <div>
                 {errors}
